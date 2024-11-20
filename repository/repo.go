@@ -8,6 +8,8 @@ import (
 
 	//	"fmt"
 
+	//	"time"
+
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
@@ -22,7 +24,9 @@ func NewRepo(dsn string) (*Repo, error) {
 		return nil, errors.WithMessage(err, "Repository: opening Error DB")
 	}
 	logrus.Debug("Repository: success opening DB")
-
+	//	db.SetMaxOpenConns(25)                                                      можно сделать так, но при количестве горутин больше 25 это ограничение будет аффектить нагрузку
+	//	db.SetMaxIdleConns(25)
+	//	db.SetConnMaxLifetime(5*time.Minute)
 	if err := db.Ping(); err != nil {
 		return nil, errors.WithMessage(err, "Repository: pinging DB")
 	}

@@ -5,14 +5,15 @@ import (
 	"benchmark/repository"
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"os/signal"
 	"strconv"
 	"sync"
 	"sync/atomic"
 	"syscall"
 	"time"
+
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -32,7 +33,7 @@ func main() {
 	for i := 0; i < cfg.ParallelProc; i++ {
 		wgEnd.Add(1)
 		i := i
-		go repoRun(ctx, repos[i], chStart, cfg, nRequests, wgEnd)
+		go loadRun(ctx, repos[i], chStart, cfg, nRequests, wgEnd)
 	}
 
 	tStart := time.Now()
@@ -69,7 +70,7 @@ func prepare() (*config.Config, []*repository.Repo, error) {
 	return cfg, repos, nil
 }
 
-func repoRun(ctx context.Context, repo *repository.Repo, chStart chan struct{}, cfg *config.Config, nRequests *int64, wgEnd *sync.WaitGroup) {
+func loadRun(ctx context.Context, repo *repository.Repo, chStart chan struct{}, cfg *config.Config, nRequests *int64, wgEnd *sync.WaitGroup) {
 	logrus.Debug("repo run")
 	defer wgEnd.Done()
 
